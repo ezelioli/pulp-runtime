@@ -18,6 +18,7 @@
 #define __HAL_PULP_H__
 
 #include <archi/pulp.h>
+#include "pulp_io.h"
 #include "udma/dvsi/udma_dvsi_v1.h"
 
 #define  __CHIP_INC(x) #x
