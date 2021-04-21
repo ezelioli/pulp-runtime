@@ -31,6 +31,7 @@ udma/i2c/version=2
 soc/fll/version=1
 udma/i2s/version=2
 udma/uart/version=1
+udma/dvsi/version=1
 event_unit/version=3
 perf_counters=True
 fll/version=1
