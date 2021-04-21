@@ -27,5 +27,6 @@
 #define DVSI_BIAS10_OFFSET                0x68
 #define DVSI_PARAMS_OFFSET                0x6C
 #define DVSI_FB_CFG0_OFFSET               0x70
+#define DVSI_FB_CFG1_OFFSET               0x74
 
 #endif
