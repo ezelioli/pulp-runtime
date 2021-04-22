@@ -11,7 +11,7 @@ static inline void plp_dvsi_disable();
 static inline void plp_dvsi_setup()
 {
   pulp_write32(ARCHI_UDMA_ADDR + UDMA_DVSI_OFFSET + DVSI_CONTROL_OFFSET          , 0xFFFFFFFF);
-  pulp_write32(ARCHI_UDMA_ADDR + UDMA_DVSI_OFFSET + DVSI_DST_OFFSET              , 0x000000FF);
+  pulp_write32(ARCHI_UDMA_ADDR + UDMA_DVSI_OFFSET + DVSI_DST_OFFSET              , 0x000000FF); //0x00
   pulp_write32(ARCHI_UDMA_ADDR + UDMA_DVSI_OFFSET + DVSI_CROP_TOP_BOTTOM_OFFSET  , 0x00000000); // todo
   pulp_write32(ARCHI_UDMA_ADDR + UDMA_DVSI_OFFSET + DVSI_CROP_LEFT_RIGHT_OFFSET  , 0x00000000); // todo
   pulp_write32(ARCHI_UDMA_ADDR + UDMA_DVSI_OFFSET + DVSI_CFG_GLOB_OFFSET         , 0x00010136); // 0x00010196
