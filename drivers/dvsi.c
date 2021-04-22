@@ -19,3 +19,13 @@ int dvsi_open()
 
   return 0;
 }
+
+void dvsi_close()
+{
+  int periph_id = ARCHI_UDMA_UART_ID(0);
+  //int channel = UDMA_EVENT_ID(periph_id);
+
+  plp_dvsi_disable();      
+
+  plp_udma_cg_set(plp_udma_cg_get() & ~(1<<periph_id));
+}

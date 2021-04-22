@@ -6,6 +6,7 @@
 #define UDMA_DVSI_OFFSET 0x300
 
 static inline void plp_dvsi_setup();
+static inline void plp_dvsi_disable();
 
 static inline void plp_dvsi_setup()
 {
@@ -36,6 +37,10 @@ static inline void plp_dvsi_setup()
   pulp_write32(ARCHI_UDMA_ADDR + UDMA_DVSI_OFFSET + DVSI_FB_CFG0_OFFSET          , 0x00000000);  // todo
   pulp_write32(ARCHI_UDMA_ADDR + UDMA_DVSI_OFFSET + DVSI_FB_CFG1_OFFSET          , 0x00000000);  // todo
 
+}
+
+static inline void plp_dvsi_disable(){
+  pulp_write32(ARCHI_UDMA_ADDR + UDMA_DVSI_OFFSET + DVSI_CFG_GLOB_OFFSET, 0x00000000); // todo
 }
 
 #endif
