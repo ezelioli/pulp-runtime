@@ -1,8 +1,8 @@
 #include "pulp.h"
 
-static void dvsi_setup()
+static void dvsi_setup(dvsi_cfg_t* config)
 {
-  plp_dvsi_setup();
+  plp_dvsi_setup(config);
 }
 
 int dvsi_open()
