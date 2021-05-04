@@ -10,11 +10,18 @@
 #define DVSI_FROM_REGISTER   0x01
 
 typedef struct {
-  uint8_t frame_req_src;
+  uint8_t   frame_req_src;
+  uint32_t  buffer_addr;
 } dvsi_cfg_t;
+
+typedef struct {
+  uint8_t on_off_data;
+  uint16_t xy_addr;
+} dvsi_event_t;
 
 static inline void plp_dvsi_setup();
 static inline void plp_dvsi_disable();
+//static inline void plp_dvsi_start();
 
 static inline void plp_dvsi_setup(dvsi_cfg_t* config)
 {
@@ -32,7 +39,7 @@ static inline void plp_dvsi_setup(dvsi_cfg_t* config)
   pulp_write32(ARCHI_UDMA_ADDR + UDMA_DVSI_OFFSET + DVSI_CFG_GLOB_OFFSET         , cfg_glob_reg); // 0x00010196 -> set power (16) to 0 
   pulp_write32(ARCHI_UDMA_ADDR + UDMA_DVSI_OFFSET + DVSI_CFG_XYRES_OFFSET        , 0x00004D1D);
   pulp_write32(ARCHI_UDMA_ADDR + UDMA_DVSI_OFFSET + DVSI_CFG_TIMER_OFFSET        , 0x08FF008F);
-  pulp_write32(ARCHI_UDMA_ADDR + UDMA_DVSI_OFFSET + DVSI_L2_START_ADDR_OFFSET    , 0x00000000); // write here a pointer to the buffer where you want to read
+  pulp_write32(ARCHI_UDMA_ADDR + UDMA_DVSI_OFFSET + DVSI_L2_START_ADDR_OFFSET    , config->buffer_addr); // write here a pointer to the buffer where you want to read
   pulp_write32(ARCHI_UDMA_ADDR + UDMA_DVSI_OFFSET + DVSI_L2_ADDR_STEP_OFFSET     , 0x00000004);
   pulp_write32(ARCHI_UDMA_ADDR + UDMA_DVSI_OFFSET + DVSI_TRIGGER_THRESHOLD_OFFSET, 0x000000FF);
   pulp_write32(ARCHI_UDMA_ADDR + UDMA_DVSI_OFFSET + DVSI_TRIGGER_TDELTA_OFFSET   , 0x0000FFFF);
@@ -57,5 +64,9 @@ static inline void plp_dvsi_setup(dvsi_cfg_t* config)
 static inline void plp_dvsi_disable(){
   pulp_write32(ARCHI_UDMA_ADDR + UDMA_DVSI_OFFSET + DVSI_CFG_GLOB_OFFSET, 0x00000000); // todo
 }
+
+//static inline void plp_dvsi_start(){
+//  pulp_write32(ARCHI_UDMA_ADDR + UDMA_DVSI_OFFSET + DVSI_CFG_GLOB_OFFSET, 0x00000000);
+//}
 
 #endif
