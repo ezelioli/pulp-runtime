@@ -1,11 +1,11 @@
 #include "pulp.h"
 
-static void dvsi_setup(dvsi_cfg_t* config)
+static void dvsi_setup(dvsi_cfg_t *config)
 {
   plp_dvsi_setup(config);
 }
 
-int dvsi_open()
+int dvsi_open(dvsi_cfg_t *config)
 {
   int periph_id = ARCHI_UDMA_DVSI_ID(0);
   //int channel = UDMA_EVENT_ID(periph_id);
@@ -15,7 +15,7 @@ int dvsi_open()
   soc_eu_fcEventMask_setEvent(0); //channel
   soc_eu_fcEventMask_setEvent(1); //channel+1
 
-  dvsi_setup();
+  dvsi_setup(config);
 
   return 0;
 }
