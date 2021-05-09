@@ -6,8 +6,8 @@
 
 #define UDMA_DVSI_OFFSET 0x300
 
-#define DVSI_FROM_TIMER      0X00
-#define DVSI_FROM_REGISTER   0x01
+#define DVSI_FROM_TIMER      0X01
+#define DVSI_FROM_REGISTER   0x00
 
 typedef struct {
   uint8_t   frame_req_src;
