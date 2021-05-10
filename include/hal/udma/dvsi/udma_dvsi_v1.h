@@ -36,7 +36,6 @@ static inline void plp_dvsi_setup(dvsi_cfg_t* config)
   pulp_write32(ARCHI_UDMA_ADDR + UDMA_DVSI_OFFSET + DVSI_DST_OFFSET              , 0x000000FF); //0x00
   pulp_write32(ARCHI_UDMA_ADDR + UDMA_DVSI_OFFSET + DVSI_CROP_TOP_BOTTOM_OFFSET  , 0x00000000); // todo
   pulp_write32(ARCHI_UDMA_ADDR + UDMA_DVSI_OFFSET + DVSI_CROP_LEFT_RIGHT_OFFSET  , 0x00000000); // todo
-  pulp_write32(ARCHI_UDMA_ADDR + UDMA_DVSI_OFFSET + DVSI_CFG_GLOB_OFFSET         , cfg_glob_reg); // 0x00010196 -> set power (16) to 0 
   pulp_write32(ARCHI_UDMA_ADDR + UDMA_DVSI_OFFSET + DVSI_CFG_XYRES_OFFSET        , 0x00004D1D);
   pulp_write32(ARCHI_UDMA_ADDR + UDMA_DVSI_OFFSET + DVSI_CFG_TIMER_OFFSET        , 0x08FF008F);
   pulp_write32(ARCHI_UDMA_ADDR + UDMA_DVSI_OFFSET + DVSI_L2_START_ADDR_OFFSET    , config->buffer_addr); // write here a pointer to the buffer where you want to read
@@ -58,6 +57,8 @@ static inline void plp_dvsi_setup(dvsi_cfg_t* config)
   pulp_write32(ARCHI_UDMA_ADDR + UDMA_DVSI_OFFSET + DVSI_PARAMS_OFFSET           , 0x00000002);
   pulp_write32(ARCHI_UDMA_ADDR + UDMA_DVSI_OFFSET + DVSI_FB_CFG0_OFFSET          , 0x00000000);  // todo
   pulp_write32(ARCHI_UDMA_ADDR + UDMA_DVSI_OFFSET + DVSI_FB_CFG1_OFFSET          , 0x00000000);  // todo
+
+  pulp_write32(ARCHI_UDMA_ADDR + UDMA_DVSI_OFFSET + DVSI_CFG_GLOB_OFFSET         , cfg_glob_reg); // 0x00010196 -> set power (16) to 0 
 
 }
 
