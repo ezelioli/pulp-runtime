@@ -4,11 +4,24 @@
 #include "archi/udma/dvsi/udma_dvsi_v1.h"
 #include "stdint.h"
 
-#define DVSI_FROM_TIMER      0X01
-#define DVSI_FROM_REGISTER   0x00
+// address_mode
+#define DVSI_ADDRESS_SPARSE   0x00
+#define DVSI_ADDRESS_DENSE    0x01
+
+// frame_req_src
+#define DVSI_FROM_TIMER       0X01
+#define DVSI_FROM_REGISTER    0x00
+
+// framebuf_trigger_src
+#define DVSI_FB_FROM_REGISTER 0x00
+#define DVSI_FB_FROM_TIMER    0x01
+#define DVSI_FB_FROM_SAER     0x02
+
 
 typedef struct {
-  uint8_t   frame_req_src;
+  uint8_t   address_mode;            // cfg[5]
+  uint8_t   frame_req_src;           // cfg[19]
+  uint8_t   framebuf_trigger_src;    // cfg[22:21]
   uint32_t  buffer_addr;
 } dvsi_cfg_t;
 
@@ -26,7 +39,9 @@ static inline void plp_dvsi_trigger_fb_reg();
 static inline void plp_dvsi_setup(dvsi_cfg_t* config)
 {
 
+  uint32_t address_mode;
   uint32_t frame_req_src;
+  uint32_t framebuf_trigger_src;
   uint32_t cfg_glob_reg;
 
   // Configure global register:
@@ -47,8 +62,15 @@ static inline void plp_dvsi_setup(dvsi_cfg_t* config)
   // Bits 26:23 = 0 - no write padding
   // Bit 27 = 1 - CUTIE trigger enabled
   
+  cfg_glob_reg = 0x000401F6;
+
+  address_mode = 0x01 & config->address_mode;
   frame_req_src = 0x01 & config->frame_req_src;
-  cfg_glob_reg = 0x00010136 | (frame_req_src << 19);
+  framebuf_trigger_src = 0x01 & config->framebuf_trigger_src;
+
+  cfg_glob_reg |= (address_mode << 5);
+  cfg_glob_reg |= (frame_req_src << 19);
+  cfg_glob_reg |= (framebuf_trigger_src << 21);
 
   // bias configuration
   pulp_write32(DVSI_ADDRESS + DVSI_BIAS0_OFFSET            , 100000    );
@@ -77,13 +99,13 @@ static inline void plp_dvsi_setup(dvsi_cfg_t* config)
   // timer configuration
   pulp_write32(DVSI_ADDRESS + DVSI_CFG_TIMER_OFFSET        , 0x08FF008F);
 
-  pulp_write32(DVSI_ADDRESS + DVSI_TRIGGER_THRESHOLD_OFFSET, 0x000000FF); // 0x0f ?
-  pulp_write32(DVSI_ADDRESS + DVSI_TRIGGER_TDELTA_OFFSET   , 0x0000FFFF); // 0x0fff ?
+  pulp_write32(DVSI_ADDRESS + DVSI_TRIGGER_THRESHOLD_OFFSET, 0x0000000F); // 0x0ff
+  pulp_write32(DVSI_ADDRESS + DVSI_TRIGGER_TDELTA_OFFSET   , 0x00000FFF); // 0x0ff
   pulp_write32(DVSI_ADDRESS + DVSI_INT_MODE_OFFSET         , 0x00000002);
 
 
-  pulp_write32(DVSI_ADDRESS + DVSI_CONTROL_OFFSET          , 0xFFFFFFFF);
-  pulp_write32(DVSI_ADDRESS + DVSI_DST_OFFSET              , 0x000000FF); //0x00
+//  pulp_write32(DVSI_ADDRESS + DVSI_CONTROL_OFFSET          , 0xFFFFFFFF); // not used
+  pulp_write32(DVSI_ADDRESS + DVSI_DST_OFFSET              , 0x00000000); //0x00 (for sure ends with last 2 bits == 00, not sure about sot/eot but leave them to 0)
   pulp_write32(DVSI_ADDRESS + DVSI_CROP_TOP_BOTTOM_OFFSET  , 0x00000000); // todo
   pulp_write32(DVSI_ADDRESS + DVSI_CROP_LEFT_RIGHT_OFFSET  , 0x00000000); // todo
 
@@ -93,6 +115,13 @@ static inline void plp_dvsi_setup(dvsi_cfg_t* config)
   // stop initializing L2 address
   cfg_glob_reg &= (~(1 << 4));
   pulp_write32(DVSI_ADDRESS + DVSI_CFG_GLOB_OFFSET         , cfg_glob_reg);
+
+  // start powerup sequence
+  cfg_glob_reg |= (1<<16);
+  pulp_write32(DVSI_ADDRESS+ DVSI_CFG_GLOB_OFFSET          , cfg_glob_reg);
+
+  // give some time to power up
+  plp_dvsi_wait(15);
 
 }
 

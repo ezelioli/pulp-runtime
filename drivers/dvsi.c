@@ -13,6 +13,7 @@ void dvsi_config_udma(int periph_id) {
 
 void dvsi_config_interrupts(void) {
   // unmask DVSI events in SoC event unit
+  //soc_eu_fcEventMask_setEvent(ARCHI_SOC_EVENT_DVSI0_RX);
   soc_eu_fcEventMask_setEvent(ARCHI_SOC_EVENT_DVSI0_SAER_DONE);
   soc_eu_fcEventMask_setEvent(ARCHI_SOC_EVENT_DVSI0_FB_DONE);
 
