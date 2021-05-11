@@ -1,6 +1,10 @@
 #ifndef __ARCHI_UDMA_UDMA_DVSI_V1_H__
 #define __ARCHI_UDMA_UDMA_DVSI_V1_H__
 
+#define UDMA_DVSI_OFFSET 0x300
+
+#define DVSI_ADDRESS ARCHI_UDMA_ADDR + UDMA_DVSI_OFFSET
+
 #define DVSI_CONTROL_OFFSET               0x00
 #define DVSI_STATUS_OFFSET                0x04
 #define DVSI_DST_OFFSET                   0x08
@@ -28,5 +32,8 @@
 #define DVSI_PARAMS_OFFSET                0x6C
 #define DVSI_FB_CFG0_OFFSET               0x70
 #define DVSI_FB_CFG1_OFFSET               0x74
+
+#define ARCHI_SOC_EVENT_DVSI0_SAER_DONE   0x00 // to check and fix
+#define ARCHI_SOC_EVENT_DVSI0_FB_DONE     0x01 // to check and fix
 
 #endif

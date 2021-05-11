@@ -75,8 +75,9 @@ void uart_close(int uart_id);
 int uart_write(int uart_id, void *buffer, uint32_t size);
 int uart_read(int uart_id, void *buffer, uint32_t size);
 
-int dvsi_open();
+int dvsi_open(dvsi_cfg_t *config)
 void dvsi_close();
+void dvsi_wait_saer();
 
 void synch_barrier();
 
