@@ -17,16 +17,22 @@
 #define DVSI_FB_FROM_TIMER    0x01
 #define DVSI_FB_FROM_SAER     0x02
 
+// mode
+#define SAER_FRAMES  0x00
+#define USE_FRAME_BUFFER 0x01
+
 
 typedef struct {
   uint8_t   address_mode;            // cfg[5]
   uint8_t   frame_req_src;           // cfg[19]
   uint8_t   framebuf_trigger_src;    // cfg[22:21]
   uint32_t  buffer_addr;
+  uint8_t   mode;
 } dvsi_cfg_t;
 
 typedef struct {
-  uint8_t on_off_data;
+  uint8_t off_data;
+  uint8_t on_data;
   uint16_t xy_addr;
 } dvsi_event_t;
 
@@ -43,6 +49,7 @@ static inline void plp_dvsi_setup(dvsi_cfg_t* config)
   uint32_t frame_req_src;
   uint32_t framebuf_trigger_src;
   uint32_t cfg_glob_reg;
+  uint8_t mode;
 
   // Configure global register:
   // Bit 0 = 0 - don't trigger frame req
@@ -50,7 +57,7 @@ static inline void plp_dvsi_setup(dvsi_cfg_t* config)
   // Bit 2 = 1 - execute flush
   // Bit 3 = 0 - disable test mode
   // Bit 4 = 1 - init L2 Address
-  // Bit 5 = 1 - addressing mode: dense-
+  // Bit 5 = 0 - addressing mode: sparse
   // Bit 6 = 1 - use synchronized data from SAER control
   // Bit 7 = 1 - use DVS X/Y address decoder
   // Bits 15:8 = 1 - don't divide clock in SAER control
@@ -59,18 +66,20 @@ static inline void plp_dvsi_setup(dvsi_cfg_t* config)
   // Bit 19 = 0 - trigger frame_req with config register
   // Bit 20 = 0 - don't trigger framebuffer readout
   // Bit 22:21 = 0/1/2 - trigger source for framebuffer readout
-  // Bits 26:23 = 0 - no write padding
+  // Bits 26:23 = 0 - no write padding // trying to set it to one
   // Bit 27 = 1 - CUTIE trigger enabled
   
-  cfg_glob_reg = 0x000401F6;
+  cfg_glob_reg = 0x000401D6;
 
   address_mode = 0x01 & config->address_mode;
   frame_req_src = 0x01 & config->frame_req_src;
-  framebuf_trigger_src = 0x01 & config->framebuf_trigger_src;
+  framebuf_trigger_src = 0x03 & config->framebuf_trigger_src;
+  mode = 0x1 & config->mode;
 
   cfg_glob_reg |= (address_mode << 5);
   cfg_glob_reg |= (frame_req_src << 19);
   cfg_glob_reg |= (framebuf_trigger_src << 21);
+  cfg_glob_reg |= (1 << 23);
 
   // bias configuration
   pulp_write32(DVSI_ADDRESS + DVSI_BIAS0_OFFSET            , 100000    );
@@ -109,8 +118,28 @@ static inline void plp_dvsi_setup(dvsi_cfg_t* config)
   pulp_write32(DVSI_ADDRESS + DVSI_CROP_TOP_BOTTOM_OFFSET  , 0x00000000); // todo
   pulp_write32(DVSI_ADDRESS + DVSI_CROP_LEFT_RIGHT_OFFSET  , 0x00000000); // todo
 
-  pulp_write32(DVSI_ADDRESS + DVSI_FB_CFG0_OFFSET          , 0x00000000);  // todo
-  pulp_write32(DVSI_ADDRESS + DVSI_FB_CFG1_OFFSET          , 0x00000000);  // todo
+  // Framebuffer Ints register:
+  // Bits 7:0   = 'd66 - frame width
+  // Bits 15:8  = 'd52 - frame height
+  // Bits 19:16 = 'd0000 - downsampling lower threshold
+  // Bits 23:20 = 'd0001 - downsampling higher threshold
+  // Bits 27:24 = 'd0010 - framebuffer window
+  // Bits 31:28 = 'd0010 - framebuffer readout interval
+  uint32_t framebuf_cfg_ints = 52 + (66 << 8);
+  framebuf_cfg_ints |= (0 << 16);
+  framebuf_cfg_ints |= (1 << 20);
+  framebuf_cfg_ints |= (2 << 24);
+  framebuf_cfg_ints |= (2 << 28);
+  pulp_write32(DVSI_ADDRESS + DVSI_FB_CFG0_OFFSET          , framebuf_cfg_ints);
+
+  // Framebuffer Bits register:
+  // Bit 0 = config->mode (enables framebuffer)
+  // Bit 1 = 1 - CUTIE encoding enabled
+  // Bit 2 = 1 - downsampling is always on
+  uint32_t framebuf_cfg_bits = 4;
+  framebuf_cfg_bits |= mode;
+  framebuf_cfg_bits |= (1 << 1);
+  pulp_write32(DVSI_ADDRESS + DVSI_FB_CFG1_OFFSET          , framebuf_cfg_bits);
 
   // stop initializing L2 address
   cfg_glob_reg &= (~(1 << 4));

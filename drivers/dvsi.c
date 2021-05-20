@@ -31,7 +31,15 @@ void dvsi_wait_evt_id(uint32_t id) {  // id should be ARCHI_SOC_EVENT_DVSI0_SAER
 }
 
 void dvsi_wait_saer(){
+
   dvsi_wait_evt_id(ARCHI_SOC_EVENT_DVSI0_SAER_DONE);
+  
+}
+
+void dvsi_wait_fb(){
+
+  dvsi_wait_evt_id(ARCHI_SOC_EVENT_DVSI0_FB_DONE);
+  
 }
 
 int dvsi_open(dvsi_cfg_t *config)
@@ -60,7 +68,7 @@ void dvsi_close()
   int periph_id = ARCHI_UDMA_UART_ID(0);
   //int channel = UDMA_EVENT_ID(periph_id);
 
-  plp_dvsi_disable();      
+  plp_dvsi_disable();
 
   plp_udma_cg_set(plp_udma_cg_get() & ~(1<<periph_id));
 }

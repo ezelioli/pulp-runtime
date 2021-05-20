@@ -33,7 +33,7 @@
 #define DVSI_FB_CFG0_OFFSET               0x70
 #define DVSI_FB_CFG1_OFFSET               0x74
 
-#define ARCHI_SOC_EVENT_DVSI0_SAER_DONE   0x00 // to check and fix
-#define ARCHI_SOC_EVENT_DVSI0_FB_DONE     0x01 // to check and fix
+#define ARCHI_SOC_EVENT_DVSI0_SAER_DONE   0x15 // to check and fix (21)
+#define ARCHI_SOC_EVENT_DVSI0_FB_DONE     0x16 // to check and fix (22)
 
 #endif
