@@ -66,8 +66,8 @@ static inline void plp_dvsi_setup(dvsi_cfg_t* config)
   // Bit 19 = 0 - trigger frame_req with config register
   // Bit 20 = 0 - don't trigger framebuffer readout
   // Bit 22:21 = 0/1/2 - trigger source for framebuffer readout
-  // Bits 26:23 = 0 - no write padding // trying to set it to one
-  // Bit 27 = 1 - CUTIE trigger enabled
+  // Bits 26:23 = 0 - no write padding
+  // Bit 27 = 0 - CUTIE trigger disabled
   
   cfg_glob_reg = 0x000401D6;
 
@@ -79,7 +79,7 @@ static inline void plp_dvsi_setup(dvsi_cfg_t* config)
   cfg_glob_reg |= (address_mode << 5);
   cfg_glob_reg |= (frame_req_src << 19);
   cfg_glob_reg |= (framebuf_trigger_src << 21);
-  cfg_glob_reg |= (1 << 23);
+  //cfg_glob_reg |= (1 << 23); no write padding needed
 
   // bias configuration
   pulp_write32(DVSI_ADDRESS + DVSI_BIAS0_OFFSET            , 100000    );
